@@ -228,6 +228,7 @@ function appendItemToShoppingListEl(item) {
     
     const newEl = document.createElement("li")
     newEl.textContent = itemData.name
+    newEl.style.touchAction = "manipulation" // Prevent zoom on double tap
     
     // Set completed class if item is completed
     if (itemData.completed) {
@@ -237,7 +238,7 @@ function appendItemToShoppingListEl(item) {
     // Track taps for single vs double click behavior
     let tapTimeout
     
-    newEl.addEventListener("click", function() {
+    newEl.addEventListener("click", function(e) {
         const currentTime = new Date().getTime()
         const timeSinceLastTap = currentTime - lastTapTime
         
@@ -263,6 +264,7 @@ function appendListToListsContainerEl(list) {
     const listData = list[1]
     
     const newEl = document.createElement("li")
+    newEl.style.touchAction = "manipulation" // Prevent zoom on double tap
     
     // Create list info container
     const listInfoDiv = document.createElement("div")
