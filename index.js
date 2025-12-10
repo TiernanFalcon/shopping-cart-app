@@ -2,11 +2,17 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebas
 import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
 import { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js"
 
-const appSettings = {
-    databaseURL: "https://realtime-database-b9772-default-rtdb.firebaseio.com/"
+const firebaseConfig = {
+  apiKey: "AIzaSyDzy7NksBeUBDqWRJSKHXvpy-TnNwcs2S4",
+  authDomain: "realtime-database-b9772.firebaseapp.com",
+  databaseURL: "https://realtime-database-b9772-default-rtdb.firebaseio.com",
+  projectId: "realtime-database-b9772",
+  storageBucket: "realtime-database-b9772.firebasestorage.app",
+  messagingSenderId: "854432919983",
+  appId: "1:854432919983:web:d0403b6855a220aa0c3f5a"
 }
 
-const app = initializeApp(appSettings)
+const app = initializeApp(firebaseConfig)
 const database = getDatabase(app)
 const auth = getAuth(app)
 const provider = new GoogleAuthProvider()
