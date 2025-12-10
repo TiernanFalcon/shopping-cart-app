@@ -5,6 +5,7 @@ html, body {
     background-color: #EEF0F4;
     color: #432000;
     user-select: none;
+    -webkit-user-select: none;
 }
 
 .container {
@@ -12,6 +13,11 @@ html, body {
     flex-direction: column;
     max-width: 320px;
     margin: 30px auto;
+    padding: 0 15px;
+}
+
+.hidden {
+    display: none !important;
 }
 
 img {
@@ -19,6 +25,56 @@ img {
     margin: 0 auto;
 }
 
+/* Sign In Screen */
+.sign-in-container {
+    align-items: center;
+    text-align: center;
+    margin-top: 80px;
+}
+
+.sign-in-container h1 {
+    margin: 20px 0 5px 0;
+    font-weight: 400;
+    font-size: 28px;
+}
+
+.sign-in-container p {
+    margin: 0 0 30px 0;
+    color: #666;
+    font-size: 16px;
+}
+
+.google-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: white;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: 'Rubik', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.google-button:hover {
+    background-color: #f8f8f8;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.google-button:active {
+    background-color: #eee;
+}
+
+.google-button svg {
+    flex-shrink: 0;
+}
+
+/* Input */
 input {
     color: #432000;
     background-color: #DCE1EB;
@@ -31,7 +87,18 @@ input {
     margin: 10px 0;
 }
 
-button {
+input:focus {
+    outline: 2px solid #AC485A;
+    outline-offset: 2px;
+}
+
+input::placeholder {
+    color: #432000;
+    opacity: 0.5;
+}
+
+/* Add Button */
+button#add-button {
     color: #FDFDFD;
     background-color: #AC485A;
     border: 0;
@@ -40,131 +107,170 @@ button {
     font-size: 20px;
     text-align: center;
     font-family: 'Rubik', sans-serif;
-    margin-bottom: 10px;
-}
-
-button:hover {
-    background-color: #432000;
     cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+    -webkit-tap-highlight-color: transparent;
 }
 
-#lists-button {
-    background-color: #5A8CAC;
+button#add-button:hover {
+    background-color: #8a3a48;
 }
 
-#back-to-shopping-button {
-    background-color: #5A8CAC;
+button#add-button:active {
+    background-color: #432000;
+    transform: scale(0.98);
 }
 
+/* Shopping List */
 ul {
     list-style-type: none;
     padding: 0;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 10px;
+    margin-top: 15px;
 }
 
 ul li {
     font-size: 20px;
     background-color: #FFFDF8;
-    padding: 15px;
+    padding: 15px 20px;
     border-radius: 8px;
-    flex-grow: 1;
     text-align: center;
-    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.2s;
-    touch-action: manipulation; /* Prevent zoom on double tap */
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    
+    transition: 
+        background-color 0.15s ease,
+        transform 0.2s ease,
+        opacity 0.2s ease,
+        box-shadow 0.15s ease;
+    
+    will-change: transform;
 }
 
 ul li:hover {
-    background-color: #FFECC7;
-    cursor: pointer;
+    background-color: #FFF8E8;
 }
 
-/* List item completed state */
+ul li:active:not(.swiping) {
+    transform: scale(0.98);
+}
+
+/* Completed state */
 ul li.completed {
     text-decoration: line-through;
-    opacity: 0.7;
-    background-color: #F0F0F0;
+    color: #999;
+    background-color: #F5F5F5;
+    box-shadow: none;
 }
 
-/* Lists container specific styles */
-#lists-container li {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+ul li.completed:hover {
+    background-color: #EFEFEF;
 }
 
-#lists-container li .list-info {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    text-align: left;
+/* Entering animation */
+ul li.entering {
+    opacity: 0;
+    transform: translateY(-10px);
 }
 
-#lists-container li .list-name {
-    font-weight: bold;
-    margin-bottom: 3px;
+/* Removing animation */
+ul li.removing {
+    opacity: 0;
+    transform: translateX(-20px);
 }
 
-#lists-container li .list-date {
-    font-size: 14px;
-    color: #666;
+/* Swipe delete animation */
+ul li.deleting {
+    opacity: 0;
+    transform: translateX(-100%);
+    transition: 
+        opacity 0.2s ease,
+        transform 0.2s ease;
 }
 
-#lists-container li .item-count {
-    background-color: #AC485A;
-    color: white;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
+/* While swiping */
+ul li.swiping {
+    transition: none;
+    background-color: #FFE5E5;
 }
 
-/* Confirmation dialog styles */
-.dialog-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-}
-
-.dialog-box {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    max-width: 300px;
-    width: 100%;
+/* Loading state */
+ul li.loading {
+    background-color: transparent;
+    box-shadow: none;
+    color: #888;
+    cursor: default;
     text-align: center;
 }
 
-.dialog-buttons {
+ul li.loading:hover {
+    background-color: transparent;
+}
+
+/* Empty state */
+ul li.empty-state {
+    background-color: transparent;
+    box-shadow: none;
+    color: #888;
+    cursor: default;
+    font-style: italic;
+}
+
+ul li.empty-state:hover {
+    background-color: transparent;
+}
+
+/* Swipe hint (mobile) */
+@media (hover: none) {
+    ul li:not(.completed):not(.loading):not(.empty-state)::after {
+        content: "← swipe to delete";
+        display: block;
+        font-size: 11px;
+        color: #bbb;
+        margin-top: 6px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    ul li:not(.completed):not(.loading):not(.empty-state):first-of-type::after {
+        opacity: 1;
+    }
+}
+
+/* User Footer */
+.user-footer {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    margin-top: 20px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+    font-size: 13px;
+    color: #888;
 }
 
-.dialog-buttons button {
-    flex: 1;
-    margin: 0 5px;
-    padding: 10px;
+#user-email {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 180px;
 }
 
-#confirm-delete-button {
-    background-color: #d9534f;
+#sign-out-button {
+    background: none;
+    border: none;
+    color: #AC485A;
+    font-size: 13px;
+    font-family: 'Rubik', sans-serif;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.15s ease;
 }
 
-#cancel-delete-button {
-    background-color: #5A8CAC;
+#sign-out-button:hover {
+    background-color: rgba(172, 72, 90, 0.1);
 }
