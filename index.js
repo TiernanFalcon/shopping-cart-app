@@ -80,6 +80,7 @@ function showSignIn() {
 }
 
 function subscribeToShoppingList() {
+    unsubscribeFromShoppingList()
     shoppingListEl.innerHTML = '<li class="loading">Loading...</li>'
     
     unsubscribe = onValue(shoppingListInDB, (snapshot) => {
@@ -147,7 +148,6 @@ function addItem() {
     })
     
     inputFieldEl.value = ""
-    inputFieldEl.focus()
 }
 
 function normalizeItem(value) {
@@ -172,11 +172,13 @@ function appendItemToShoppingListEl(id, itemData) {
     let touchStartX = 0
     let touchCurrentX = 0
     let isSwiping = false
+    let touchHandled = false
     
     li.addEventListener("touchstart", (e) => {
         touchStartX = e.touches[0].clientX
         touchCurrentX = touchStartX
         isSwiping = false
+        touchHandled = false
         li.classList.remove("swiping")
     }, { passive: true })
     
@@ -193,6 +195,7 @@ function appendItemToShoppingListEl(id, itemData) {
     }, { passive: true })
     
     li.addEventListener("touchend", () => {
+        touchHandled = true
         const diff = touchStartX - touchCurrentX
         
         if (diff > 80) {
@@ -206,7 +209,11 @@ function appendItemToShoppingListEl(id, itemData) {
     })
     
     li.addEventListener("click", (e) => {
-        if (e.sourceCapabilities && e.sourceCapabilities.firesTouchEvents) return
+        // Prevent click from firing after touch was already handled
+        if (touchHandled) {
+            touchHandled = false
+            return
+        }
         toggleCompleted(id, li)
     })
     
@@ -243,25 +250,31 @@ function toggleCompleted(id, li) {
 }
 
 function deleteItem(id, li) {
-    li.classList.add("deleting")
+    // Animate out
+    li.style.transition = "transform 0.2s ease, opacity 0.2s ease"
+    li.style.transform = "translateX(-100%)"
+    li.style.opacity = "0"
     
-    li.addEventListener("transitionend", function handler() {
-        li.removeEventListener("transitionend", handler)
+    // Remove from Firebase (slight delay for animation)
+    setTimeout(() => {
         const itemRef = ref(database, `shoppingList/${id}`)
         remove(itemRef)
-    })
+        renderedItems.delete(id) 
+    }, 150)
 }
 
 function removeItemWithAnimation(id, li) {
-    li.classList.add("removing")
+    // Animate out
+    li.style.transition = "transform 0.2s ease, opacity 0.2s ease"
+    li.style.transform = "translateX(-20px)"
+    li.style.opacity = "0"
     
-    li.addEventListener("transitionend", function handler() {
-        li.removeEventListener("transitionend", handler)
+    setTimeout(() => {
         li.remove()
         renderedItems.delete(id)
         
         if (renderedItems.size === 0) {
             shoppingListEl.innerHTML = '<li class="empty-state">No items here... yet</li>'
         }
-    })
+    }, 200)
 }
