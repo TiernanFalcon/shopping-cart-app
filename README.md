@@ -1,13 +1,7 @@
-# co097427c919a8af765b6a9ed
+# A shopping cart app
+Heavily modified from a Scrimba project
 
-Quick start:
 
-```
-$ npm install
-$ npm start
-````
-
-Head over to https://vitejs.dev/ to learn more about using vite
 ## About Scrimba
 
 At Scrimba our goal is to create the best possible coding school at the cost of a gym membership! 💜
