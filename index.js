@@ -129,6 +129,7 @@ addButtonEl.addEventListener("click", addItem)
 inputFieldEl.addEventListener("keypress", (e) => {
     if (e.key === "Enter") {
         addItem()
+        inputFieldEl.blur() // Dismiss keyboard on mobile
     }
 })
 
@@ -200,13 +201,13 @@ function appendItemToShoppingListEl(id, itemData) {
             li.style.transform = ""
             li.classList.remove("swiping")
         } else {
-            toggleCompleted(id, itemData)
+            toggleCompleted(id, li)
         }
     })
     
     li.addEventListener("click", (e) => {
         if (e.sourceCapabilities && e.sourceCapabilities.firesTouchEvents) return
-        toggleCompleted(id, itemData)
+        toggleCompleted(id, li)
     })
     
     li.classList.add("entering")
@@ -229,11 +230,15 @@ function updateItemEl(id, itemData) {
     li.classList.toggle("completed", itemData.completed)
 }
 
-function toggleCompleted(id, itemData) {
+function toggleCompleted(id, li) {
+    // Read current state from DOM, not stale closure
+    const currentlyCompleted = li.classList.contains("completed")
+    const text = li.textContent
+    
     const itemRef = ref(database, `shoppingList/${id}`)
     update(itemRef, {
-        text: itemData.text,
-        completed: !itemData.completed
+        text: text,
+        completed: !currentlyCompleted
     })
 }
 
