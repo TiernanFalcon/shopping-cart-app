@@ -170,35 +170,52 @@ function appendItemToShoppingListEl(id, itemData) {
     }
     
     let touchStartX = 0
+    let touchStartY = 0
     let touchCurrentX = 0
     let isSwiping = false
     let touchHandled = false
+    let isScrolling = false
     
     li.addEventListener("touchstart", (e) => {
         touchStartX = e.touches[0].clientX
+        touchStartY = e.touches[0].clientY
         touchCurrentX = touchStartX
         isSwiping = false
         touchHandled = false
+        isScrolling = false
         li.classList.remove("swiping")
     }, { passive: true })
     
     li.addEventListener("touchmove", (e) => {
         touchCurrentX = e.touches[0].clientX
-        const diff = touchStartX - touchCurrentX
+        const diffX = touchStartX - touchCurrentX
+        const diffY = Math.abs(e.touches[0].clientY - touchStartY)
         
-        if (diff > 10) {
+        // If moved vertically more than 10px, user is scrolling
+        if (diffY > 10) {
+            isScrolling = true
+            li.style.transform = ""
+            li.classList.remove("swiping")
+            return
+        }
+        
+        // Horizontal swipe
+        if (diffX > 10 && !isScrolling) {
             isSwiping = true
             li.classList.add("swiping")
-            const translateX = Math.min(Math.max(-diff, -100), 0)
+            const translateX = Math.min(Math.max(-diffX, -100), 0)
             li.style.transform = `translateX(${translateX}px)`
         }
     }, { passive: true })
     
     li.addEventListener("touchend", () => {
         touchHandled = true
-        const diff = touchStartX - touchCurrentX
+        const diffX = touchStartX - touchCurrentX
         
-        if (diff > 80) {
+        if (isScrolling) {
+            // Was scrolling, do nothing
+            return
+        } else if (diffX > 80) {
             deleteItem(id, li)
         } else if (isSwiping) {
             li.style.transform = ""
