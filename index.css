@@ -183,14 +183,7 @@ ul li.removing {
     transform: translateX(-20px);
 }
 
-/* Swipe delete animation */
-ul li.deleting {
-    opacity: 0;
-    transform: translateX(-100%);
-    transition: 
-        opacity 0.2s ease,
-        transform 0.2s ease;
-}
+
 
 /* While swiping */
 ul li.swiping {
