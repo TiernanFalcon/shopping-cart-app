@@ -41,6 +41,7 @@ const createListButtonEl = document.getElementById("create-list-button")
 const listsListEl = document.getElementById("lists-list")
 const backButtonEl = document.getElementById("back-button")
 const userEmailListsEl = document.getElementById("user-email-lists")
+const listsHelperEl = document.getElementById("lists-helper")
 
 // DOM elements - Auth
 const signInButtonEl = document.getElementById("sign-in-button")
@@ -184,6 +185,22 @@ listsScreenEl.addEventListener("touchend", () => {
     }
 })
 
+// ============ HELPER FUNCTIONS ============
+
+function getItemsRef(listId) {
+    if (listId === MAIN_LIST_ID) {
+        return ref(database, "shoppingList")
+    }
+    return ref(database, `lists/${listId}/items`)
+}
+
+function getItemPath(listId, itemId) {
+    if (listId === MAIN_LIST_ID) {
+        return `shoppingList/${itemId}`
+    }
+    return `lists/${listId}/items/${itemId}`
+}
+
 // ============ ITEMS ============
 
 function selectList(listId, animate = true) {
@@ -210,12 +227,7 @@ function selectList(listId, animate = true) {
     }
 }
 
-function getItemsRef(listId) {
-    if (listId === MAIN_LIST_ID) {
-        return ref(database, "shoppingList")
-    }
-    return ref(database, `lists/${listId}/items`)
-}
+
 
 function subscribeToItems(listId) {
     // Unsubscribe from previous
@@ -392,18 +404,12 @@ function updateItemEl(id, itemData) {
     li.classList.toggle("completed", itemData.completed)
 }
 
-function getItemPath(listId, itemId) {
-    if (listId === MAIN_LIST_ID) {
-        return `shoppingList/${itemId}`
-    }
-    return `lists/${listId}/items/${itemId}`
-}
+
 
 function toggleItemCompleted(id, li) {
     const currentlyCompleted = li.classList.contains("completed")
-    const text = li.textContent
+    const text = li.textContent    
     
-    const itemsRef = getItemsRef(currentListId)
     const itemRef = ref(database, getItemPath(currentListId, id))
     
     update(itemRef, {
@@ -417,8 +423,7 @@ function deleteItemWithAnimation(id, li) {
     li.style.transform = "translateX(-100%)"
     li.style.opacity = "0"
     
-    setTimeout(() => {
-        const itemsRef = getItemsRef(currentListId)
+    setTimeout(() => {        
         const itemRef = ref(database, getItemPath(currentListId, id))
         remove(itemRef)
         renderedItems.delete(id)
@@ -458,6 +463,8 @@ function subscribeToLists() {
         if (!renderedLists.has(MAIN_LIST_ID)) {
             appendListToListsEl(MAIN_LIST_ID, MAIN_LIST_NAME, true)
         }
+
+        let customListCount = 0
         
         if (snapshot.exists()) {
             const lists = snapshot.val()
@@ -473,8 +480,18 @@ function subscribeToLists() {
             for (const [id, data] of Object.entries(lists)) {
                 if (!renderedLists.has(id) && data.meta) {
                     appendListToListsEl(id, data.meta.name, false)
+                    customListCount++
+                } else if (data.meta) {
+                    customListCount++
                 }
             }
+        }
+
+        // Show/hide helper text
+        if (customListCount === 0) {
+            listsHelperEl.classList.remove("hidden")
+        } else {
+            listsHelperEl.classList.add("hidden")
         }
         
         // Clear loading message
