@@ -139,6 +139,7 @@ ul li {
     text-align: center;
     box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.15);
     cursor: pointer;
+    flex-grow: 1;
     -webkit-tap-highlight-color: transparent;
     
     transition: 
