@@ -222,8 +222,7 @@ ul {
     list-style-type: none;
     padding: 0;
     display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
+    flex-wrap: wrap;    
     gap: 10px;
     margin-top: 15px;
 }
@@ -239,6 +238,7 @@ ul.column-layout li {
 }
 
 ul li {
+    position: relative;
     font-size: 20px;
     background-color: #FFFDF8;
     padding: 15px 20px;
@@ -333,17 +333,25 @@ ul li.empty-state:hover {
 
 /* Swipe hint (mobile) */
 @media (hover: none) {
+     #shopping-list li:not(.completed):not(.loading):not(.empty-state):first-of-type {
+        padding-bottom: 30px;
+    }
+    
     /* Items screen - swipe to delete */
     #shopping-list li:not(.completed):not(.loading):not(.empty-state):first-of-type::after {
         content: "← swipe to delete";
-        display: block;
+        position: absolute;
+        bottom: 8px;
+        left: 0;
+        right: 0;
         font-size: 11px;
         color: #bbb;
-        margin-top: 6px;        
+        text-align: center;
     }
     
     
-    /* Lists screen - Main List: swipe to clear */
+    /* Lists screen - Main List: swipe to clear */    
+    
     #lists-list li[data-is-main="true"]::after {
         content: "← swipe to clear";
         display: block;
