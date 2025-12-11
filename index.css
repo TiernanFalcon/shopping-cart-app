@@ -101,15 +101,6 @@ h2 {
     transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.screen.slide-out-left {
-    transform: translateX(-100%);
-    opacity: 0;
-}
-
-.screen.slide-out-right {
-    transform: translateX(100%);
-    opacity: 0;
-}
 
 .screen.slide-in-left {
     animation: slideInLeft 0.3s ease forwards;
@@ -295,13 +286,6 @@ ul li.entering {
     transform: translateY(-10px);
 }
 
-/* Removing animation */
-ul li.removing {
-    opacity: 0;
-    transform: translateX(-20px);
-}
-
-
 
 /* While swiping */
 ul li.swiping {
@@ -335,6 +319,15 @@ ul li.empty-state {
 
 ul li.empty-state:hover {
     background-color: transparent;
+}
+
+/* Helper text */
+.helper-text {
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+    font-style: italic;
+    margin-top: 15px;
 }
 
 
@@ -477,3 +470,5 @@ ul li.empty-state:hover {
 .modal-button.confirm:hover {
     background-color: #8a3a48;
 }
+
+
