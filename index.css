@@ -6,6 +6,7 @@ html, body {
     color: #432000;
     user-select: none;
     -webkit-user-select: none;
+    overflow-x: hidden;
 }
 
 .container {
@@ -23,6 +24,27 @@ html, body {
 img {
     width: 150px;
     margin: 0 auto;
+}
+
+h2 {
+    text-align: center;
+    font-weight: 400;
+    font-size: 20px;
+    margin: 10px 0;
+    color: #666;
+}
+
+/* Loading Screen */
+.loading-container {
+    align-items: center;
+    text-align: center;
+    margin-top: 80px;
+}
+
+.loading-container p {
+    color: #888;
+    font-size: 16px;
+    margin-top: 20px;
 }
 
 /* Sign In Screen */
@@ -74,6 +96,42 @@ img {
     flex-shrink: 0;
 }
 
+/* Screen transitions */
+.screen {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+
+.screen.slide-in-left {
+    animation: slideInLeft 0.3s ease forwards;
+}
+
+.screen.slide-in-right {
+    animation: slideInRight 0.3s ease forwards;
+}
+
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
 /* Input */
 input {
     color: #432000;
@@ -97,8 +155,8 @@ input::placeholder {
     opacity: 0.5;
 }
 
-/* Add Button */
-button#add-button {
+/* Primary Button (Add to cart, Create list) */
+.primary-button {
     color: #FDFDFD;
     background-color: #AC485A;
     border: 0;
@@ -110,18 +168,56 @@ button#add-button {
     cursor: pointer;
     transition: background-color 0.15s ease, transform 0.1s ease;
     -webkit-tap-highlight-color: transparent;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-button#add-button:hover {
+.primary-button:hover {
     background-color: #8a3a48;
 }
 
-button#add-button:active {
+.primary-button:active {
     background-color: #432000;
     transform: scale(0.98);
 }
 
-/* Shopping List */
+/* Secondary Button (Lists, Back) */
+.secondary-button {
+    color: #FDFDFD;
+    background-color: #5A8CAC;
+    border: 0;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 20px;
+    text-align: center;
+    font-family: 'Rubik', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+    -webkit-tap-highlight-color: transparent;
+    margin-top: 10px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.secondary-button:hover {
+    background-color: #4a7a99;
+}
+
+.secondary-button:active {
+    background-color: #3a6a88;
+    transform: scale(0.98);
+}
+
+.secondary-button svg {
+    flex-shrink: 0;
+}
+
+/* Shopping List - flex wrap layout */
 ul {
     list-style-type: none;
     padding: 0;
@@ -129,6 +225,16 @@ ul {
     flex-wrap: wrap;
     gap: 10px;
     margin-top: 15px;
+}
+
+/* Column layout for lists screen */
+ul.column-layout {
+    flex-direction: column;
+}
+
+ul.column-layout li {
+    width: 100%;
+    box-sizing: border-box;
 }
 
 ul li {
@@ -139,7 +245,6 @@ ul li {
     text-align: center;
     box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.15);
     cursor: pointer;
-    flex-grow: 1;
     -webkit-tap-highlight-color: transparent;
     line-height: 1;
     display: flex;
@@ -181,13 +286,6 @@ ul li.entering {
     transform: translateY(-10px);
 }
 
-/* Removing animation */
-ul li.removing {
-    opacity: 0;
-    transform: translateX(-20px);
-}
-
-
 
 /* While swiping */
 ul li.swiping {
@@ -223,9 +321,20 @@ ul li.empty-state:hover {
     background-color: transparent;
 }
 
+/* Helper text */
+.helper-text {
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+    font-style: italic;
+    margin-top: 15px;
+}
+
+
 /* Swipe hint (mobile) */
 @media (hover: none) {
-    ul li:not(.completed):not(.loading):not(.empty-state)::after {
+    /* Items screen - swipe to delete */
+    #shopping-list li:not(.completed):not(.loading):not(.empty-state)::after {
         content: "← swipe to delete";
         display: block;
         font-size: 11px;
@@ -235,8 +344,17 @@ ul li.empty-state:hover {
         transition: opacity 0.3s ease;
     }
     
-    ul li:not(.completed):not(.loading):not(.empty-state):first-of-type::after {
+    #shopping-list li:not(.completed):not(.loading):not(.empty-state):first-of-type::after {
         opacity: 1;
+    }
+    
+    /* Lists screen - Main List: swipe to clear */
+    #lists-list li[data-is-main="true"]::after {
+        content: "← swipe to clear";
+        display: block;
+        font-size: 11px;
+        color: #bbb;
+        margin-top: 6px;
     }
 }
 
@@ -252,14 +370,14 @@ ul li.empty-state:hover {
     color: #888;
 }
 
-#user-email {
+.user-footer span {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 180px;
 }
 
-#sign-out-button {
+.sign-out-button {
     background: none;
     border: none;
     color: #AC485A;
@@ -271,6 +389,86 @@ ul li.empty-state:hover {
     transition: background-color 0.15s ease;
 }
 
-#sign-out-button:hover {
+.sign-out-button:hover {
     background-color: rgba(172, 72, 90, 0.1);
 }
+
+/* Confirmation Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.2s ease;
+}
+
+.modal.hidden {
+    display: flex !important;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 280px;
+    width: 90%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    transform: scale(1);
+    transition: transform 0.2s ease;
+}
+
+.modal.hidden .modal-content {
+    transform: scale(0.9);
+}
+
+.modal-content p {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    color: #432000;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.modal-button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: 'Rubik', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.modal-button.cancel {
+    background-color: #ddd;
+    color: #333;
+}
+
+.modal-button.cancel:hover {
+    background-color: #ccc;
+}
+
+.modal-button.confirm {
+    background-color: #AC485A;
+    color: white;
+}
+
+.modal-button.confirm:hover {
+    background-color: #8a3a48;
+}
+
+
