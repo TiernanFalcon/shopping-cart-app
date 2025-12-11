@@ -333,19 +333,14 @@ ul li.empty-state:hover {
 /* Swipe hint (mobile) */
 @media (hover: none) {
     /* Items screen - swipe to delete */
-    #shopping-list li:not(.completed):not(.loading):not(.empty-state)::after {
+    #shopping-list li:not(.completed):not(.loading):not(.empty-state):first-of-type::after {
         content: "← swipe to delete";
         display: block;
         font-size: 11px;
         color: #bbb;
-        margin-top: 6px;
-        opacity: 0;
-        transition: opacity 0.3s ease;
+        margin-top: 6px;        
     }
     
-    #shopping-list li:not(.completed):not(.loading):not(.empty-state):first-of-type::after {
-        opacity: 1;
-    }
     
     /* Lists screen - Main List: swipe to clear */
     #lists-list li[data-is-main="true"]::after {
