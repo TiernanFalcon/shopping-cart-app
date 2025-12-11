@@ -250,6 +250,7 @@ ul li {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex: 0 0 auto;
     
     transition: 
         background-color 0.15s ease,
