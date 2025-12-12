@@ -285,8 +285,7 @@ function normalizeItem(value) {
 addItemButtonEl.addEventListener("click", addItem)
 itemInputEl.addEventListener("keypress", (e) => {
     if (e.key === "Enter") {
-        addItem()
-        itemInputEl.blur()
+        addItem()        
     }
 })
 
@@ -340,10 +339,11 @@ function setupItemTouchHandlers(li, id) {
     let touchStartTime = 0
     let isSwiping = false
     let touchHandled = false
+    let isScrolling = false
     
     const SWIPE_THRESHOLD = 50
-    const FLICK_THRESHOLD = 30
-    const FLICK_VELOCITY = 0.5
+    const FLICK_THRESHOLD = 45
+    const FLICK_VELOCITY = 0.7
 
     li.addEventListener("touchstart", (e) => {
         touchStartX = e.touches[0].clientX
@@ -352,6 +352,7 @@ function setupItemTouchHandlers(li, id) {
         touchStartTime = Date.now()
         isSwiping = false
         touchHandled = false
+        isScrolling = false
         li.classList.remove("swiping", "swipe-ready")
         li.style.transform = ""
     }, { passive: true })
@@ -366,6 +367,7 @@ function setupItemTouchHandlers(li, id) {
             li.style.transform = ""
             li.classList.remove("swiping", "swipe-ready")
             isSwiping = false
+            isScrolling = true
             return
         }
 
@@ -400,7 +402,7 @@ function setupItemTouchHandlers(li, id) {
             deleteItemWithAnimation(id, li)
         } else if (isSwiping) {
             li.style.transform = ""
-        } else {
+        } else if (!isScrolling) {
             toggleItemCompleted(id, li)
         }
     })
