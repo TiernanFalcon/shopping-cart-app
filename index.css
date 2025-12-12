@@ -241,7 +241,7 @@ ul li {
     position: relative;
     font-size: 20px;
     background-color: #FFFDF8;
-    padding: 15px 20px;
+    padding: 25px 20px;
     border-radius: 8px;
     flex-grow: 1;
     justify-content: center;
@@ -293,6 +293,12 @@ ul li.swiping {
     background-color: #FFE5E5;
 }
 
+/* Ready to delete state */
+ul li.swipe-ready {
+    background-color: #FFCDD2;
+    transform: translateX(-50px) scale(0.98) !important;
+}
+
 /* Loading state */
 ul li.loading {
     background-color: transparent;
@@ -333,7 +339,7 @@ ul li.empty-state:hover {
 
 /* Swipe hint (mobile) */
 @media (hover: none) {
-     #shopping-list li:not(.completed):not(.loading):not(.empty-state):first-of-type {
+    #shopping-list li:not(.completed):not(.loading):not(.empty-state) {
         padding-bottom: 30px;
     }
     
