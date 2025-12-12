@@ -337,56 +337,74 @@ function setupItemTouchHandlers(li, id) {
     let touchStartX = 0
     let touchStartY = 0
     let touchCurrentX = 0
+    let touchStartTime = 0
     let isSwiping = false
     let touchHandled = false
-    let isScrolling = false
     
+    const SWIPE_THRESHOLD = 50
+    const FLICK_THRESHOLD = 30
+    const FLICK_VELOCITY = 0.5
+
     li.addEventListener("touchstart", (e) => {
         touchStartX = e.touches[0].clientX
         touchStartY = e.touches[0].clientY
         touchCurrentX = touchStartX
+        touchStartTime = Date.now()
         isSwiping = false
         touchHandled = false
-        isScrolling = false
-        li.classList.remove("swiping")
+        li.classList.remove("swiping", "swipe-ready")
+        li.style.transform = ""
     }, { passive: true })
-    
+
     li.addEventListener("touchmove", (e) => {
         touchCurrentX = e.touches[0].clientX
         const diffX = touchStartX - touchCurrentX
         const diffY = Math.abs(e.touches[0].clientY - touchStartY)
-        
-        if (diffY > 10) {
-            isScrolling = true
+
+        // Only cancel if vertical movement dominates horizontal
+        if (diffY > diffX && diffY > 20) {
             li.style.transform = ""
-            li.classList.remove("swiping")
+            li.classList.remove("swiping", "swipe-ready")
+            isSwiping = false
             return
         }
-        
-        if (diffX > 10 && !isScrolling) {
+
+        if (diffX > 10) {
             isSwiping = true
             li.classList.add("swiping")
-            const translateX = Math.min(Math.max(-diffX, -100), 0)
-            li.style.transform = `translateX(${translateX}px)`
+            
+            // Show ready state when threshold reached
+            if (diffX >= SWIPE_THRESHOLD) {
+                li.classList.add("swipe-ready")
+            } else {
+                li.classList.remove("swipe-ready")
+                const translateX = Math.max(-diffX, -100)
+                li.style.transform = `translateX(${translateX}px)`
+            }
         }
     }, { passive: true })
-    
+
     li.addEventListener("touchend", () => {
         touchHandled = true
         const diffX = touchStartX - touchCurrentX
+        const elapsed = Date.now() - touchStartTime
+        const velocity = diffX / elapsed
+
+        li.classList.remove("swiping", "swipe-ready")
         
-        if (isScrolling) {
-            return
-        } else if (diffX > 80) {
+        // Delete if: exceeded threshold OR quick flick
+        const shouldDelete = diffX >= SWIPE_THRESHOLD || 
+                            (diffX >= FLICK_THRESHOLD && velocity >= FLICK_VELOCITY)
+
+        if (isSwiping && shouldDelete) {
             deleteItemWithAnimation(id, li)
         } else if (isSwiping) {
             li.style.transform = ""
-            li.classList.remove("swiping")
         } else {
             toggleItemCompleted(id, li)
         }
     })
-    
+
     li.addEventListener("click", (e) => {
         if (touchHandled) {
             touchHandled = false
